@@ -32,8 +32,19 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* JumpAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* PressAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-public:
+	void Press();
 
+private:
+	UPROPERTY()
+	class ADoorButton* OverlappingButton;
+	UPROPERTY()
+	class ADoor* Door;
+
+public:
+	FORCEINLINE void SetOverlappingButton(ADoorButton* Button) { OverlappingButton = Button; }
 };

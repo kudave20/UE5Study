@@ -5,6 +5,8 @@
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
+#include "UE5Study/Prop/Door.h"
 
 AMainCharacter::AMainCharacter()
 {
@@ -23,6 +25,8 @@ void AMainCharacter::BeginPlay()
 			Subsystem->AddMappingContext(MainContext, 0);
 		}
 	}
+
+	Door = Cast<ADoor>(UGameplayStatics::GetActorOfClass(this, ADoor::StaticClass()));
 }
 
 void AMainCharacter::Tick(float DeltaTime)
@@ -40,6 +44,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AMainCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMainCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(PressAction, ETriggerEvent::Triggered, this, &AMainCharacter::Press);
 	}
 }
 
@@ -62,4 +67,15 @@ void AMainCharacter::Look(const FInputActionValue& Value)
 
 	AddControllerPitchInput(LookAxisVector.Y);
 	AddControllerYawInput(LookAxisVector.X);
+}
+
+void AMainCharacter::Press()
+{
+	if (OverlappingButton == nullptr) return;
+	
+	Door = Door == nullptr ? Cast<ADoor>(UGameplayStatics::GetActorOfClass(this, ADoor::StaticClass())) : Door;
+	if (Door)
+	{
+		Door->Explode();
+	}
 }
